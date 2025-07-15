@@ -2,6 +2,8 @@ let model;
 const video = document.getElementById("webcam");
 const cards = document.querySelectorAll('.card');
 let selectedIndex = 0;
+let holdStartTime = null;
+let lastIndex = -1;
 
 // Highlight the selected product card
 function highlightCard(index) {
@@ -33,14 +35,33 @@ function runDetection() {
       const x = hand.bbox[0]; // X position of hand
       console.log("Hand X position:", x);
 
-      // Simple logic to scroll items
+      // Gesture navigation
       if (x < 100 && selectedIndex > 0) {
         selectedIndex--;
-        highlightCard(selectedIndex);
       } else if (x > 250 && selectedIndex < cards.length - 1) {
         selectedIndex++;
-        highlightCard(selectedIndex);
       }
+
+      highlightCard(selectedIndex);
+
+      // Hold detection logic
+      if (selectedIndex === lastIndex) {
+        if (!holdStartTime) {
+          holdStartTime = Date.now();
+        } else {
+          const heldTime = Date.now() - holdStartTime;
+          if (heldTime > 2000) { // 2 seconds
+            alert(`✅ Purchased: ${cards[selectedIndex].textContent}`);
+            holdStartTime = null;
+          }
+        }
+      } else {
+        holdStartTime = null;
+        lastIndex = selectedIndex;
+      }
+
+    } else {
+      holdStartTime = null; // No hand = reset
     }
 
     requestAnimationFrame(runDetection);
