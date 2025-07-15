@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SilentCart</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>🛒 SilentCart</h1>
+    <p>A calm, gesture-controlled shopping assistant</p>
+
+    <div class="products">
+      <div class="card">Milk</div>
+      <div class="card">Bread</div>
+      <div class="card">Fruits</div>
+    </div>
+
+    <video id="webcam" autoplay></video>
+    <button onclick="startDetection()">Start Gesture Tracking</button>
+  </div>
+
+  <script src="handtrack.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
