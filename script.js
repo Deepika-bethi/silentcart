@@ -18,14 +18,17 @@ function startDetection() {
 
 function runDetection() {
   model.detect(video).then(predictions => {
-    console.log("Predictions:", predictions); // 👈 watch this in browser console
     if (predictions.length > 0) {
-      const hand = predictions[0].label;
-      alert(`Detected: ${hand}`);
+      const handLabel = predictions[0].label;
+      console.log("Detected hand:", handLabel);
+      alert(`Detected: ${handLabel}`);
+    } else {
+      console.log("No hand detected.");
     }
     requestAnimationFrame(runDetection);
   });
 }
+
 
 handTrack.load().then(lmodel => {
   console.log("Model loaded ✅");
