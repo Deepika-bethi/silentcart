@@ -1,84 +1,64 @@
-const video = document.getElementById("webcam");
-const itemDisplay = document.getElementById("itemDisplay");
-const cartList = document.getElementById("cartList");
+document.addEventListener("DOMContentLoaded", function () {
+  const categories = {
+    Milk: ["Cow Milk", "Toned Milk", "Butter", "Curd"],
+    Bread: ["White Bread", "Brown Bread", "Garlic Bread", "Burger Bun"],
+    Fruits: ["Apple", "Banana", "Mango", "Watermelon"],
+  };
 
-let model = null;
-let currentItemIndex = 0;
-let cart = [];
-let lastGesture = "";
+  const categoryButtons = document.querySelectorAll(".category-buttons button");
+  const itemsGrid = document.getElementById("items-grid");
+  const cartItems = document.getElementById("cart-items");
+  const gestureMessage = document.getElementById("gesture-message");
+  const checkoutBtn = document.getElementById("checkout");
 
-const items = [
-    "Milk", "Bread", "Fruits", "Rice", "Toothpaste",
-    "Pickles", "Soap", "Biscuits", "Chips", "Cream"
-];
+  let cart = [];
 
-const modelParams = {
-    flipHorizontal: true,
-    maxNumBoxes: 1,
-    iouThreshold: 0.5,
-    scoreThreshold: 0.6,
-};
-
-function startVideo() {
-    handTrack.startVideo(video).then(status => {
-        if (status) {
-            console.log("Webcam started!");
-            runDetection();
-        } else {
-            console.log("Please enable camera access.");
-        }
-    }).catch(err => {
-        console.error("Error starting video:", err);
+  categoryButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const category = button.getAttribute("data-category");
+      showItems(category);
     });
-}
+  });
 
-function runDetection() {
-    model.detect(video).then(predictions => {
-        if (predictions.length > 0) {
-            const gesture = predictions[0].label;
-
-            if (gesture !== lastGesture) {
-                console.log("Gesture detected:", gesture);
-                lastGesture = gesture;
-
-                if (gesture === "open") {
-                    const currentItem = items[currentItemIndex];
-                    if (!cart.includes(currentItem)) {
-                        cart.push(currentItem);
-                        updateCart();
-                    } else {
-                        alert(`${currentItem} already in cart!`);
-                    }
-                } else if (gesture === "point") {
-                    currentItemIndex = (currentItemIndex + 1) % items.length;
-                    updateItemDisplay();
-                } else if (gesture === "closed") {
-                    alert("Checkout complete!");
-                    cart = [];
-                    updateCart();
-                }
-            }
-        }
-
-        requestAnimationFrame(runDetection);
+  function showItems(category) {
+    itemsGrid.innerHTML = "";
+    const items = categories[category];
+    items.forEach((itemName) => {
+      const div = document.createElement("div");
+      div.className = "item-card";
+      div.textContent = itemName;
+      div.addEventListener("click", () => addToCart(itemName));
+      itemsGrid.appendChild(div);
     });
-}
+  }
 
-function updateItemDisplay() {
-    itemDisplay.innerText = items[currentItemIndex];
-}
+  function addToCart(item) {
+    cart.push(item);
+    renderCart();
+  }
 
-function updateCart() {
-    cartList.innerHTML = "";
-    cart.forEach(item => {
-        const li = document.createElement("li");
-        li.innerText = item;
-        cartList.appendChild(li);
+  function renderCart() {
+    cartItems.innerHTML = "";
+    cart.forEach((item) => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      cartItems.appendChild(li);
     });
-}
+  }
 
-handTrack.load(modelParams).then(lmodel => {
-    model = lmodel;
-    updateItemDisplay();
-    startVideo();
+  checkoutBtn.addEventListener("click", () => {
+    if (cart.length > 0) {
+      gestureMessage.textContent = "🛒 Checkout complete!";
+      cart = [];
+      renderCart();
+    } else {
+      gestureMessage.textContent = "Cart is empty!";
+    }
+  });
+
+  // DUMMY: Gesture simulation for now
+  // In real use, you'd connect this with hand gesture detection
+  setTimeout(() => {
+    gestureMessage.textContent = "👋 Showing gesture recognition...";
+  }, 3000);
 });
