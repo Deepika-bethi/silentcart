@@ -1,64 +1,78 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const categories = {
-    Milk: ["Cow Milk", "Toned Milk", "Butter", "Curd"],
-    Bread: ["White Bread", "Brown Bread", "Garlic Bread", "Burger Bun"],
-    Fruits: ["Apple", "Banana", "Mango", "Watermelon"],
-  };
+let cart = [];
+let selectedCategory = "";
+let itemsData = {
+  Fruits: ["Apple", "Banana", "Orange"],
+  Groceries: ["Rice", "Dal", "Salt"],
+  Creams: ["Fairness Cream", "Moisturizer", "Sunscreen"]
+};
 
-  const categoryButtons = document.querySelectorAll(".category-buttons button");
-  const itemsGrid = document.getElementById("items-grid");
-  const cartItems = document.getElementById("cart-items");
-  const gestureMessage = document.getElementById("gesture-message");
-  const checkoutBtn = document.getElementById("checkout");
+// Load webcam
+const video = document.getElementById('webcam');
+const statusBox = document.getElementById('status');
 
-  let cart = [];
-
-  categoryButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const category = button.getAttribute("data-category");
-      showItems(category);
-    });
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => {
+    video.srcObject = stream;
+    statusBox.textContent = "🟢 Camera started. Show hand gesture.";
+  })
+  .catch(err => {
+    statusBox.textContent = "🔴 Failed to access camera.";
+    console.error(err);
   });
 
-  function showItems(category) {
-    itemsGrid.innerHTML = "";
-    const items = categories[category];
-    items.forEach((itemName) => {
-      const div = document.createElement("div");
-      div.className = "item-card";
-      div.textContent = itemName;
-      div.addEventListener("click", () => addToCart(itemName));
-      itemsGrid.appendChild(div);
-    });
-  }
+// Show items by category
+function showItems(category) {
+  selectedCategory = category;
+  const items = itemsData[category];
+  const listDiv = document.getElementById('items-list');
+  listDiv.innerHTML = `<h3>${category} Items:</h3>`;
+  items.forEach(item => {
+    const itemDiv = document.createElement('div');
+    itemDiv.className = "item";
+    itemDiv.innerText = item;
+    listDiv.appendChild(itemDiv);
+  });
+}
 
-  function addToCart(item) {
-    cart.push(item);
-    renderCart();
-  }
+// Simulate gesture detection
+setInterval(() => {
+  const gesture = detectGesture(); // Mock gesture
+  if (!gesture || !selectedCategory) return;
 
-  function renderCart() {
-    cartItems.innerHTML = "";
-    cart.forEach((item) => {
-      const li = document.createElement("li");
-      li.textContent = item;
-      cartItems.appendChild(li);
-    });
-  }
-
-  checkoutBtn.addEventListener("click", () => {
-    if (cart.length > 0) {
-      gestureMessage.textContent = "🛒 Checkout complete!";
-      cart = [];
-      renderCart();
+  const items = itemsData[selectedCategory];
+  if (gesture === 'open') {
+    const randomItem = items[Math.floor(Math.random() * items.length)];
+    if (!cart.includes(randomItem)) {
+      cart.push(randomItem);
+      updateCart();
+      statusBox.textContent = `🛒 Added ${randomItem}`;
     } else {
-      gestureMessage.textContent = "Cart is empty!";
+      statusBox.textContent = `⚠️ ${randomItem} already in cart`;
     }
-  });
+  } else if (gesture === 'fist') {
+    if (cart.length === 0) {
+      statusBox.textContent = "🛑 Cart is empty!";
+    } else {
+      statusBox.textContent = "✅ Checkout Complete!";
+      cart = [];
+      updateCart();
+    }
+  }
+}, 2500);
 
-  // DUMMY: Gesture simulation for now
-  // In real use, you'd connect this with hand gesture detection
-  setTimeout(() => {
-    gestureMessage.textContent = "👋 Showing gesture recognition...";
-  }, 3000);
-});
+// Fake gesture detection (random demo)
+function detectGesture() {
+  const gestures = [null, 'open', 'fist', null];
+  return gestures[Math.floor(Math.random() * gestures.length)];
+}
+
+// Update cart
+function updateCart() {
+  const ul = document.getElementById('cart');
+  ul.innerHTML = '';
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item;
+    ul.appendChild(li);
+  });
+}
