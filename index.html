@@ -4,27 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SilentCart</title>
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>🛒 SilentCart - Gesture Shopping</h1>
-  
-  <video id="webcam" autoplay></video>
+  <h1>🛒 SilentCart</h1>
 
-  <div id="products">
-    <div class="card" data-item="Milk">Milk 🥛</div>
-    <div class="card" data-item="Bread">Bread 🍞</div>
-    <div class="card" data-item="Fruits">Fruits 🍎</div>
+  <div id="categories" class="grid">
+    <button onclick="openCategory('Groceries')">Groceries</button>
+    <button onclick="openCategory('Fruits')">Fruits</button>
+    <button onclick="openCategory('Utensils')">Utensils</button>
+    <button onclick="openCategory('Food Items')">Food Items</button>
+    <button onclick="openCategory('Creams & Pickles')">Creams & Pickles</button>
   </div>
 
-  <div id="cart-box">
-    <h2>Your Cart 🧺</h2>
-    <ul id="cart-list"></ul>
+  <div id="product-section" class="hidden">
+    <h2 id="category-title"></h2>
+    <div id="products" class="grid"></div>
+    <button onclick="backToCategories()">⬅ Back to Categories</button>
   </div>
 
-  <div id="checkout" class="hidden">
-    <h2>Checkout Complete ✅</h2>
-    <p id="checkout-items"></p>
+  <div id="cart">
+    <h2>Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <button onclick="checkout()">✅ Checkout</button>
   </div>
 
   <script src="script.js"></script>
