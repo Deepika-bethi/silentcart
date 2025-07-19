@@ -1,61 +1,59 @@
-let currentIndex = 0;
-let items = ["Milk", "Bread", "Fruits"];
+const categories = {
+  "Groceries": ["Rice", "Wheat", "Oil"],
+  "Fruits": ["Apple", "Banana", "Mango"],
+  "Utensils": ["Plate", "Spoon", "Glass"],
+  "Food Items": ["Biscuits", "Chips", "Chocolates"],
+  "Creams & Pickles": ["Face Cream", "Mango Pickle", "Lime Pickle"]
+};
+
 let cart = [];
 
-const webcam = document.getElementById("webcam");
-const cartList = document.getElementById("cart-list");
-const checkoutDiv = document.getElementById("checkout");
-const checkoutItems = document.getElementById("checkout-items");
+function openCategory(name) {
+  document.getElementById("categories").classList.add("hidden");
+  document.getElementById("product-section").classList.remove("hidden");
+  document.getElementById("category-title").textContent = name;
 
-// Start webcam
-navigator.mediaDevices.getUserMedia({ video: true }).then(stream => {
-  webcam.srcObject = stream;
-  console.log("Webcam started ✅");
-});
+  const productDiv = document.getElementById("products");
+  productDiv.innerHTML = "";
 
-// Dummy gesture simulation
-document.addEventListener("keydown", (e) => {
-  if (e.key === "a") {
-    addItemToCart();
-  } else if (e.key === "n") {
-    nextItem();
-  } else if (e.key === "c") {
-    checkout();
+  categories[name].forEach(item => {
+    const btn = document.createElement("button");
+    btn.textContent = item;
+    btn.onclick = () => addToCart(item);
+    productDiv.appendChild(btn);
+  });
+}
+
+function backToCategories() {
+  document.getElementById("categories").classList.remove("hidden");
+  document.getElementById("product-section").classList.add("hidden");
+}
+
+function addToCart(item) {
+  if (!cart.includes(item)) {
+    cart.push(item);
+    updateCartDisplay();
+  } else {
+    alert(item + " is already in your cart.");
   }
-});
-
-function addItemToCart() {
-  const item = items[currentIndex];
-  cart.push(item);
-  updateCart();
-  alert(`${item} added to cart`);
 }
 
-function nextItem() {
-  currentIndex = (currentIndex + 1) % items.length;
-  highlightCurrentCard();
-}
-
-function checkout() {
-  checkoutDiv.classList.remove("hidden");
-  checkoutItems.innerText = "You purchased: " + cart.join(", ");
-}
-
-// UI helpers
-function updateCart() {
-  cartList.innerHTML = "";
+function updateCartDisplay() {
+  const list = document.getElementById("cart-items");
+  list.innerHTML = "";
   cart.forEach(item => {
     const li = document.createElement("li");
     li.textContent = item;
-    cartList.appendChild(li);
+    list.appendChild(li);
   });
 }
 
-function highlightCurrentCard() {
-  document.querySelectorAll(".card").forEach((card, index) => {
-    card.style.border = index === currentIndex ? "3px solid #00aaff" : "none";
-  });
+function checkout() {
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+  } else {
+    alert("Thanks for shopping! You selected: " + cart.join(", "));
+    cart = [];
+    updateCartDisplay();
+  }
 }
-
-// Initial highlight
-highlightCurrentCard();
