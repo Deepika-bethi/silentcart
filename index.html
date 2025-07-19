@@ -3,42 +3,36 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SilentCart - Gesture Shopping</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>SilentCart</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>🛍️ SilentCart</h1>
-    <p>A Calm, Gesture-Controlled Shopping Experience</p>
-  </header>
+  <div class="container">
+    <h1>SilentCart - Gesture Shopping</h1>
 
-  <main>
-    <section id="camera-section">
-      <h2>Gesture Detection Camera</h2>
-      <video id="webcam" autoplay playsinline width="400" height="300"></video>
-      <p id="gesture-message">Loading gesture recognition...</p>
-    </section>
-
-    <section id="categories">
-      <h2>🧺 Shop by Category</h2>
-      <div class="category-buttons">
-        <button data-category="Milk">Milk & Dairy</button>
-        <button data-category="Bread">Bread & Bakery</button>
-        <button data-category="Fruits">Fruits</button>
+    <div class="main-content">
+      <div class="camera-section">
+        <video id="webcam" autoplay></video>
+        <div id="status">🟢 Waiting for gesture...</div>
       </div>
-    </section>
 
-    <section id="items">
-      <h2>🧾 Available Items</h2>
-      <div id="items-grid"></div>
-    </section>
+      <div class="items-section">
+        <h2>Select a Category:</h2>
+        <div class="categories">
+          <button onclick="showItems('Fruits')">Fruits</button>
+          <button onclick="showItems('Groceries')">Groceries</button>
+          <button onclick="showItems('Creams')">Creams</button>
+        </div>
 
-    <section id="cart">
-      <h2>🛒 Your Cart</h2>
-      <ul id="cart-items"></ul>
-      <button id="checkout">Checkout</button>
-    </section>
-  </main>
+        <div id="items-list"></div>
+      </div>
+
+      <div class="cart-section">
+        <h2>Your Cart</h2>
+        <ul id="cart"></ul>
+      </div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
