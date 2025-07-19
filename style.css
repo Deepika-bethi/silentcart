@@ -1,48 +1,91 @@
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f0f8ff;
-  color: #333;
-  text-align: center;
-  padding: 20px;
+const video = document.getElementById("webcam");
+const itemDisplay = document.getElementById("itemDisplay");
+const cartList = document.getElementById("cartList");
+
+let model = null;
+let currentItemIndex = 0;
+let cart = [];
+let lastGesture = "";
+let lastActionTime = 0;
+
+const items = [
+    "Milk", "Bread", "Fruits", "Rice", "Toothpaste",
+    "Pickles", "Soap", "Biscuits", "Chips", "Cream"
+];
+
+const modelParams = {
+    flipHorizontal: true,
+    maxNumBoxes: 1,
+    iouThreshold: 0.5,
+    scoreThreshold: 0.7,
+};
+
+function startVideo() {
+    handTrack.startVideo(video).then(status => {
+        if (status) {
+            console.log("Webcam started!");
+            runDetection();
+        } else {
+            console.log("Please enable camera access.");
+        }
+    }).catch(err => {
+        console.error("Error starting video:", err);
+    });
 }
 
-h1 {
-  color: #0066cc;
+function runDetection() {
+    model.detect(video).then(predictions => {
+        const now = Date.now();
+
+        if (predictions.length > 0) {
+            const gesture = predictions[0].label;
+
+            if (gesture !== lastGesture || now - lastActionTime > 2000) {
+                lastGesture = gesture;
+                lastActionTime = now;
+
+                if (gesture === "open") {
+                    const currentItem = items[currentItemIndex];
+                    if (!cart.includes(currentItem)) {
+                        cart.push(currentItem);
+                        updateCart();
+                    } else {
+                        alert(`${currentItem} already in cart!`);
+                    }
+                } else if (gesture === "point") {
+                    currentItemIndex = (currentItemIndex + 1) % items.length;
+                    updateItemDisplay();
+                } else if (gesture === "closed") {
+                    if (cart.length > 0) {
+                        alert("✅ Checkout complete!");
+                        cart = [];
+                        updateCart();
+                    } else {
+                        alert("Your cart is empty.");
+                    }
+                }
+            }
+        }
+
+        requestAnimationFrame(runDetection);
+    });
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 15px;
-  margin: 20px 0;
+function updateItemDisplay() {
+    itemDisplay.innerText = items[currentItemIndex];
 }
 
-button {
-  padding: 12px;
-  font-size: 16px;
-  background-color: #0077cc;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: 0.3s;
+function updateCart() {
+    cartList.innerHTML = "";
+    cart.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = item;
+        cartList.appendChild(li);
+    });
 }
 
-button:hover {
-  background-color: #005fa3;
-}
-
-#cart {
-  margin-top: 30px;
-  background: #fff;
-  border: 2px solid #ccc;
-  padding: 15px;
-  border-radius: 15px;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.hidden {
-  display: none;
-}
+handTrack.load(modelParams).then(lmodel => {
+    model = lmodel;
+    updateItemDisplay();
+    startVideo();
+});
