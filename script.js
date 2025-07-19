@@ -1,89 +1,84 @@
-let model = null;
-let currentCategoryIndex = 0;
-let currentItemIndex = 0;
-let categories = ["Fruits", "Groceries", "Creams", "Pickles", "Utensils"];
-let cart = [];
-
-const itemsByCategory = {
-    Fruits: ["Apple", "Banana", "Mango"],
-    Groceries: ["Rice", "Wheat", "Dal"],
-    Creams: ["Face Cream", "Sunscreen", "Moisturizer"],
-    Pickles: ["Mango Pickle", "Lemon Pickle", "Mixed Pickle"],
-    Utensils: ["Plate", "Spoon", "Pan"]
-};
-
-function loadNextItem() {
-    currentItemIndex++;
-    if (currentItemIndex >= itemsByCategory[categories[currentCategoryIndex]].length) {
-        currentItemIndex = 0;
-        currentCategoryIndex = (currentCategoryIndex + 1) % categories.length;
-    }
-    updateUI();
-}
-
-function updateUI() {
-    const category = categories[currentCategoryIndex];
-    const item = itemsByCategory[category][currentItemIndex];
-    document.getElementById("itemDisplay").innerText = `${category} > ${item}`;
-}
-
-function addToCart() {
-    const category = categories[currentCategoryIndex];
-    const item = itemsByCategory[category][currentItemIndex];
-
-    if (!cart.includes(item)) {
-        cart.push(item);
-        updateCartDisplay();
-    } else {
-        alert("Item already in cart!");
-    }
-}
-
-function updateCartDisplay() {
-    document.getElementById("cartList").innerHTML = cart.map(i => `<li>${i}</li>`).join('');
-}
-
-function checkout() {
-    alert("Checkout complete! Items: " + cart.join(", "));
-    cart = [];
-    updateCartDisplay();
-}
-
 const video = document.getElementById("webcam");
+const itemDisplay = document.getElementById("itemDisplay");
+const cartList = document.getElementById("cartList");
+
+let model = null;
+let currentItemIndex = 0;
+let cart = [];
+let lastGesture = "";
+
+const items = [
+    "Milk", "Bread", "Fruits", "Rice", "Toothpaste",
+    "Pickles", "Soap", "Biscuits", "Chips", "Cream"
+];
 
 const modelParams = {
     flipHorizontal: true,
-    imageScaleFactor: 0.7,
     maxNumBoxes: 1,
     iouThreshold: 0.5,
     scoreThreshold: 0.6,
 };
 
-handTrack.startVideo(video).then(function (status) {
-    if (status) {
-        runDetection();
-    }
-});
+function startVideo() {
+    handTrack.startVideo(video).then(status => {
+        if (status) {
+            console.log("Webcam started!");
+            runDetection();
+        } else {
+            console.log("Please enable camera access.");
+        }
+    }).catch(err => {
+        console.error("Error starting video:", err);
+    });
+}
 
 function runDetection() {
     model.detect(video).then(predictions => {
         if (predictions.length > 0) {
-            const label = predictions[0].label;
-            console.log("Detected:", label);
+            const gesture = predictions[0].label;
 
-            if (label === "open") {
-                addToCart();
-            } else if (label === "closed") {
-                checkout();
-            } else if (label === "point") {
-                loadNextItem();
+            if (gesture !== lastGesture) {
+                console.log("Gesture detected:", gesture);
+                lastGesture = gesture;
+
+                if (gesture === "open") {
+                    const currentItem = items[currentItemIndex];
+                    if (!cart.includes(currentItem)) {
+                        cart.push(currentItem);
+                        updateCart();
+                    } else {
+                        alert(`${currentItem} already in cart!`);
+                    }
+                } else if (gesture === "point") {
+                    currentItemIndex = (currentItemIndex + 1) % items.length;
+                    updateItemDisplay();
+                } else if (gesture === "closed") {
+                    alert("Checkout complete!");
+                    cart = [];
+                    updateCart();
+                }
             }
         }
+
         requestAnimationFrame(runDetection);
+    });
+}
+
+function updateItemDisplay() {
+    itemDisplay.innerText = items[currentItemIndex];
+}
+
+function updateCart() {
+    cartList.innerHTML = "";
+    cart.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = item;
+        cartList.appendChild(li);
     });
 }
 
 handTrack.load(modelParams).then(lmodel => {
     model = lmodel;
-    updateUI();
+    updateItemDisplay();
+    startVideo();
 });
