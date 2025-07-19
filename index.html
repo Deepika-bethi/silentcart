@@ -4,24 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SilentCart</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="container">
-    <h1>🛒 SilentCart</h1>
-    <p>A calm, gesture-controlled shopping assistant</p>
+  <h1>🛒 SilentCart - Gesture Shopping</h1>
+  
+  <video id="webcam" autoplay></video>
 
-    <div class="products">
-      <div class="card">Milk</div>
-      <div class="card">Bread</div>
-      <div class="card">Fruits</div>
-    </div>
-
-    <video id="webcam" autoplay></video>
-    <button onclick="startDetection()">Start Gesture Tracking</button>
+  <div id="products">
+    <div class="card" data-item="Milk">Milk 🥛</div>
+    <div class="card" data-item="Bread">Bread 🍞</div>
+    <div class="card" data-item="Fruits">Fruits 🍎</div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/handtrackjs@0.0.12/dist/handtrack.min.js"></script>
+  <div id="cart-box">
+    <h2>Your Cart 🧺</h2>
+    <ul id="cart-list"></ul>
+  </div>
+
+  <div id="checkout" class="hidden">
+    <h2>Checkout Complete ✅</h2>
+    <p id="checkout-items"></p>
+  </div>
 
   <script src="script.js"></script>
 </body>
