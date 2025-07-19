@@ -1,91 +1,60 @@
-const video = document.getElementById("webcam");
-const itemDisplay = document.getElementById("itemDisplay");
-const cartList = document.getElementById("cartList");
-
-let model = null;
-let currentItemIndex = 0;
-let cart = [];
-let lastGesture = "";
-let lastActionTime = 0;
-
-const items = [
-    "Milk", "Bread", "Fruits", "Rice", "Toothpaste",
-    "Pickles", "Soap", "Biscuits", "Chips", "Cream"
-];
-
-const modelParams = {
-    flipHorizontal: true,
-    maxNumBoxes: 1,
-    iouThreshold: 0.5,
-    scoreThreshold: 0.7,
-};
-
-function startVideo() {
-    handTrack.startVideo(video).then(status => {
-        if (status) {
-            console.log("Webcam started!");
-            runDetection();
-        } else {
-            console.log("Please enable camera access.");
-        }
-    }).catch(err => {
-        console.error("Error starting video:", err);
-    });
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background-color: #f5faff;
+  padding: 20px;
 }
 
-function runDetection() {
-    model.detect(video).then(predictions => {
-        const now = Date.now();
-
-        if (predictions.length > 0) {
-            const gesture = predictions[0].label;
-
-            if (gesture !== lastGesture || now - lastActionTime > 2000) {
-                lastGesture = gesture;
-                lastActionTime = now;
-
-                if (gesture === "open") {
-                    const currentItem = items[currentItemIndex];
-                    if (!cart.includes(currentItem)) {
-                        cart.push(currentItem);
-                        updateCart();
-                    } else {
-                        alert(`${currentItem} already in cart!`);
-                    }
-                } else if (gesture === "point") {
-                    currentItemIndex = (currentItemIndex + 1) % items.length;
-                    updateItemDisplay();
-                } else if (gesture === "closed") {
-                    if (cart.length > 0) {
-                        alert("✅ Checkout complete!");
-                        cart = [];
-                        updateCart();
-                    } else {
-                        alert("Your cart is empty.");
-                    }
-                }
-            }
-        }
-
-        requestAnimationFrame(runDetection);
-    });
+h1 {
+  color: #0077cc;
 }
 
-function updateItemDisplay() {
-    itemDisplay.innerText = items[currentItemIndex];
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-function updateCart() {
-    cartList.innerHTML = "";
-    cart.forEach(item => {
-        const li = document.createElement("li");
-        li.innerText = item;
-        cartList.appendChild(li);
-    });
+.video-container {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  margin: 20px auto;
+  border: 5px solid #0077cc;
+  border-radius: 15px;
+  overflow: hidden;
 }
 
-handTrack.load(modelParams).then(lmodel => {
-    model = lmodel;
-    updateItemDisplay();
-    startVideo();
-});
+#webcam {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.item-display {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: rgba(0, 119, 204, 0.8);
+  color: white;
+  padding: 10px;
+  font-size: 20px;
+}
+
+.cart-container {
+  margin-top: 30px;
+  width: 300px;
+  background-color: #e8f4fc;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: left;
+}
+
+.cart-container h2 {
+  color: #0077cc;
+}
+
+#cartList {
+  list-style: none;
+  padding: 0;
+}
