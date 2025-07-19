@@ -3,44 +3,42 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SilentCart: Gesture-Controlled Shopping</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>SilentCart - Gesture Shopping</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <h1>🛒 SilentCart: A Calm Shopping Experience</h1>
+  <header>
+    <h1>🛍️ SilentCart</h1>
+    <p>A Calm, Gesture-Controlled Shopping Experience</p>
+  </header>
 
-  <div class="main-container">
-    <!-- Left Panel -->
-    <div class="left-panel">
-      <!-- Category Buttons -->
+  <main>
+    <section id="camera-section">
+      <h2>Gesture Detection Camera</h2>
+      <video id="webcam" autoplay playsinline width="400" height="300"></video>
+      <p id="gesture-message">Loading gesture recognition...</p>
+    </section>
+
+    <section id="categories">
+      <h2>🧺 Shop by Category</h2>
       <div class="category-buttons">
-        <button onclick="showItems('fruits')">Fruits</button>
-        <button onclick="showItems('groceries')">Groceries</button>
-        <button onclick="showItems('creams')">Creams</button>
-        <button onclick="showItems('pickles')">Pickles</button>
-        <button onclick="showItems('utensils')">Utensils</button>
+        <button data-category="Milk">Milk & Dairy</button>
+        <button data-category="Bread">Bread & Bakery</button>
+        <button data-category="Fruits">Fruits</button>
       </div>
+    </section>
 
-      <!-- Item Section -->
-      <div id="item-section" class="items-grid">
-        <!-- Items will appear here -->
-      </div>
-    </div>
+    <section id="items">
+      <h2>🧾 Available Items</h2>
+      <div id="items-grid"></div>
+    </section>
 
-    <!-- Right Panel: Webcam and Cart -->
-    <div class="right-panel">
-      <div class="camera-section">
-        <video id="webcam" autoplay playsinline width="300" height="225"></video>
-        <p id="gesture-message">Loading gesture model...</p>
-      </div>
-
-      <div class="cart-section">
-        <h2>Your Cart 🛍️</h2>
-        <ul id="cart-items"></ul>
-        <button onclick="checkout()">Manual Checkout</button>
-      </div>
-    </div>
-  </div>
+    <section id="cart">
+      <h2>🛒 Your Cart</h2>
+      <ul id="cart-items"></ul>
+      <button id="checkout">Checkout</button>
+    </section>
+  </main>
 
   <script src="script.js"></script>
 </body>
