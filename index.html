@@ -1,82 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SilentCart - Gesture Shopping</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #f4faff;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #0a7b83;
-        }
-
-        video {
-            width: 300px;
-            height: 225px;
-            border: 4px solid #0a7b83;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        #itemDisplay {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 20px auto;
-            background-color: #d4f1f9;
-            padding: 10px 20px;
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        h2 {
-            color: #0a7b83;
-            margin-top: 30px;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0 auto;
-            max-width: 400px;
-        }
-
-        li {
-            background-color: #e3f6f5;
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 18px;
-        }
-
-        .instructions {
-            margin-top: 30px;
-            font-size: 16px;
-            color: #555;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SilentCart - Gesture Shopping</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <h1>SilentCart 🛒</h1>
-    <video id="webcam" autoplay></video>
+  <h1>🛒 SilentCart - Gesture Shopping</h1>
 
-    <div id="itemDisplay">Loading item...</div>
-
-    <h2>🧺 Your Cart</h2>
-    <ul id="cartList"></ul>
-
-    <div class="instructions">
-        <p>✋ Show <strong>Open Palm</strong> to <strong>Add to Cart</strong></p>
-        <p>👉 Show <strong>Point</strong> to <strong>Next Item</strong></p>
-        <p>✊ Show <strong>Closed Fist</strong> to <strong>Checkout</strong></p>
+  <div class="container">
+    <div class="video-container">
+      <video id="webcam" autoplay muted></video>
+      <div id="itemDisplay" class="item-display">Loading...</div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/handtrackjs/dist/handtrack.min.js"></script>
-    <script src="script.js"></script>
+    <div class="cart-container">
+      <h2>Your Cart</h2>
+      <ul id="cartList"></ul>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/handtrackjs@0.4.0/dist/handtrack.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
